@@ -3,6 +3,9 @@
 
 class GameObject extends Object
 {
+    sprite = null
+    color = null
+
     constructor(sp = null, trans = null, parent = null )
     {
         base.constructor(trans, parent)
@@ -16,9 +19,6 @@ class GameObject extends Object
         transform.y = _y
         transform.z = _z
     }
-
-    sprite = null
-    color = null
 
     function Draw()
     {

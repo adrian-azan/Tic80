@@ -116,6 +116,9 @@ class Object
 
 class GameObject extends Object
 {
+    sprite = null
+    color = null
+
     constructor(sp = null, trans = null, parent = null )
     {
         base.constructor(trans, parent)
@@ -129,9 +132,6 @@ class GameObject extends Object
         transform.y = _y
         transform.z = _z
     }
-
-    sprite = null
-    color = null
 
     function Draw()
     {
@@ -243,6 +243,23 @@ class BeatLine extends GameObject
 
 
 
+class ActionLane extends GameObject
+{
+    beatLine = null
+    B = null
+
+    constructor()
+    {
+        base.constructor()
+        B = Button()
+        beatLine = BeatLine(null, Transform(50,10,2),null)
+    }
+
+    function Draw()
+    {
+        print(DistanceCenterX(B,beatLine),50,50,4)
+    }
+}
 
 
 
@@ -291,7 +308,7 @@ function GRAPHICS_PIPELINE()
 		}
 		catch(exception)
 		{
-
+			trace("Graphics Failure" + val)
 		}
 	}
 }
@@ -303,7 +320,7 @@ function UPDATE_PIPELINE()
 		try {
 			val.Update()
 		} catch (exception){
-
+			trace("Update Failure" + val)
 		}
 
 	}

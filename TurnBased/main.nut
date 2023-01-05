@@ -22,6 +22,7 @@
 #include ActionLane.azn
 
 
+
 local player = GameObject()
 local menu = MainMenu(player)
 
@@ -66,7 +67,7 @@ function GRAPHICS_PIPELINE()
 		}
 		catch(exception)
 		{
-
+			trace("Graphics Failure" + val)
 		}
 	}
 }
@@ -78,7 +79,7 @@ function UPDATE_PIPELINE()
 		try {
 			val.Update()
 		} catch (exception){
-
+			trace("Update Failure" + val)
 		}
 
 	}

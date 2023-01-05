@@ -1,0 +1,17 @@
+class ActionLane extends GameObject
+{
+    beatLine = null
+    B = null
+
+    constructor()
+    {
+        base.constructor()
+        B = Button()
+        beatLine = BeatLine(null, Transform(50,10,2),null)
+    }
+
+    function Draw()
+    {
+        print(DistanceCenterX(B,beatLine),50,50,4)
+    }
+}

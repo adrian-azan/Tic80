@@ -8,7 +8,8 @@ def arrayToString(values):
     return output + "\n\n"
 
 includes = dict()
-#COLLECT INCLUDES
+
+print("COMPILING INCLUDES")
 for file in os.listdir():
     try:
         #we dont need to read the contents of the builded program
@@ -21,7 +22,8 @@ for file in os.listdir():
 
 
 mainLines = []
-#FIND INCLUDES
+
+print("INSERTING INCLUDES")
 with open("main.nut") as fin:
     mainLines = fin.readlines()
     for i in range(len(mainLines)):
@@ -35,5 +37,7 @@ buildOutput = arrayToString(mainLines)
 
 
 #OUTPUT
+print("OUTPUTING")
 with open("build.nut", "w") as fout:
     fout.writelines(buildOutput)
+print(buildOutput)
