@@ -1,0 +1,19 @@
+//Object is the absolute base class
+//Everything should exist in the code as an Object
+
+class Object
+{
+    constructor(trans = null, parentTrans = null)
+    {
+        OBJECTS.append(this)
+        if (trans == null)
+            transform = Transform()
+        else
+            transform = trans
+
+
+        transform.parent = parentTrans
+    }
+
+    transform = null
+}

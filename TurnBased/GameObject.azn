@@ -1,0 +1,36 @@
+//A Gameobject is something that will likely show up in the game
+//Or at least it will exist in the game, even if not visible
+
+class GameObject extends Object
+{
+    constructor(sp = null, trans = null, parent = null )
+    {
+        base.constructor(trans, parent)
+        sprite = sp
+        color = rand()%16
+    }
+
+    function SetPosition(_x = 0, _y = 0, _z = 0)
+    {
+        transform.x = _x
+        transform.y = _y
+        transform.z = _z
+    }
+
+    sprite = null
+    color = null
+
+    function Draw()
+    {
+        if (sprite != null)
+            spr(sprite,transform.X(),transform.Y(),0,transform.scale,0,0,2,2)
+        else
+            rect(transform.x,transform.y, 10*transform.scale, 10*transform.scale, color)
+    }
+
+    function Update()
+    {
+
+    }
+}
+

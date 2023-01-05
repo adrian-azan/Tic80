@@ -1,0 +1,62 @@
+class MainMenu extends GameObject
+{
+
+    constructor(_player)
+    {
+        base.constructor()
+        base.SetPosition(0,0,-5)
+
+        local d1 = 40
+        ItemOption = GameObject(0, Transform(), _player.transform)
+        ItemOption.SetPosition(cos(Deg2Rad(70))*d1,-sin(Deg2Rad(70))*d1,0)
+
+        AttackOption = GameObject(2,Transform(),_player.transform)
+        AttackOption.SetPosition(cos(Deg2Rad(40))*d1,-sin(Deg2Rad(40))*d1,1)
+
+        DefendOption = GameObject(4,Transform(),_player.transform)
+        DefendOption.SetPosition(cos(Deg2Rad(10))*d1,-sin(Deg2Rad(10))*d1,1)
+
+        Focus = 0
+        Options = []
+        ANGLES = [70,40,10]
+        Options.push(ItemOption)
+        Options.push(AttackOption)
+        Options.push(DefendOption)
+
+
+        player = _player
+    }
+
+    targets = null
+    function Draw()
+    {
+        tri(player.transform.CenterX(),player.transform.CenterY(),
+        Options[Focus].transform.CenterX()-5*cos(Deg2Rad(45)),Options[Focus].transform.CenterY()-sin(Deg2Rad(45))*5,
+        Options[Focus].transform.CenterX()+5*cos(Deg2Rad(45)),Options[Focus].transform.CenterY()+sin(Deg2Rad(45))*5,
+        5)
+    }
+
+    function Next()
+    {
+        Focus += 1
+        Focus %= Options.len()
+    }
+
+    function Prev()
+    {
+        Focus -= 1
+        if (Focus < 0)
+            Focus = Options.len()-1
+    }
+
+    ItemOption = null
+    AttackOption = null
+    DefendOption = null
+
+    Options = null
+    Focus = null
+    ANGLES = null
+
+    player = null
+
+}

@@ -1,0 +1,3 @@
+local OBJECTS = []
+local Score = 0
+

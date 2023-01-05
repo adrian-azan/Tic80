@@ -1,0 +1,51 @@
+//TRANSFORM
+// The transform will keep track of
+// x & y position, and the rotation
+// of an ingame object
+
+class Transform
+{
+	constructor(_x = 0, _y = 0, _z = 0, _scale = 1, _parent = null)
+	{
+			x = _x
+			y = _y
+			z = _z
+			scale = _scale
+			parent = _parent
+	}
+
+	function X()
+	{
+		if (parent != null)
+			return parent.x + this.x
+		return x
+	}
+
+	function CenterX()
+	{
+		if (parent != null)
+			return parent.x + this.x+8
+		return x+8
+	}
+
+	function Y()
+	{
+		if (parent != null)
+			return parent.y + this.y
+		return y
+	}
+
+	function CenterY()
+	{
+		if (parent != null)
+			return parent.y + this.y + 8
+		return y + 8
+	}
+
+
+	x = null
+	y = null
+	z = null
+	scale = null
+	parent = null
+}

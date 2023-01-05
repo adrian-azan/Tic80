@@ -1,0 +1,49 @@
+--
+-- Bundle file
+-- Code changes will be overwritten
+--
+
+-- title:  game title
+-- author: game developer
+-- desc:   short description
+-- script: lua
+
+
+
+t=0
+x=96
+y=24
+
+function TIC()
+
+	cls()
+	rectb(0,0,240,135,12)
+
+
+	--Draw Paddles
+	spr(0,30,120)
+	
+end
+
+
+
+
+-- <TILES>
+-- 000:c0000000c0000000c0000000c0000000c0000000c0000000c0000000c0000000
+-- 001:000000000000000000000000000cc000000cc000000000000000000000000000
+-- </TILES>
+
+-- <WAVES>
+-- 000:00000000ffffffff00000000ffffffff
+-- 001:0123456789abcdeffedcba9876543210
+-- 002:0123456789abcdef0123456789abcdef
+-- </WAVES>
+
+-- <SFX>
+-- 000:000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000304000000000
+-- </SFX>
+
+-- <PALETTE>
+-- 000:1a1c2c5d275db13e53ef7d57ffcd75a7f07038b76425717929366f3b5dc941a6f673eff7f4f4f494b0c2566c86333c57
+-- </PALETTE>
+

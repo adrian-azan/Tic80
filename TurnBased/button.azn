@@ -1,0 +1,16 @@
+class Button extends GameObject
+{
+    function Draw()
+    {
+        circ(transform.CenterX(), transform.CenterY(),12,2)
+        spr(32,transform.X(), transform.Y(),0,1,0,0,2,2)
+    }
+
+    function Update()
+    {
+        transform.x -= 2
+        if (transform.x < -20)
+            transform.x = 260
+    }
+}
+

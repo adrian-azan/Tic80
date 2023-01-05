@@ -1,0 +1,8 @@
+class BeatLine extends GameObject
+{
+    function Draw()
+    {
+        line(transform.x, transform.y,transform.x, transform.y+40,4)
+    }
+}
+

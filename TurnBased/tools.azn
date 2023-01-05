@@ -1,0 +1,19 @@
+function Deg2Rad(angle)
+{
+    return (angle * PI) / 180;
+}
+
+function SortByDepth(a,b)
+{
+    return a.transform.z <=> b.transform.z
+}
+
+function DistanceX(obj1, obj2)
+{
+    return abs(obj1.transform.X() - obj2.transform.X())
+}
+
+function DistanceCenterX(obj1, obj2)
+{
+    return abs(obj1.transform.CenterX() - obj2.transform.CenterX())
+}
