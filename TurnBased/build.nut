@@ -17,6 +17,8 @@ function SortByDepth(a,b)
 
 function DistanceX(obj1, obj2)
 {
+    if (obj1.transform == null || obj2.transform == null)
+        return -1
     return abs(obj1.transform.X() - obj2.transform.X())
 }
 
@@ -34,6 +36,17 @@ const SCREEN_WIDTH = 240
 const SCREEN_HEIGHT = 136
 
 
+
+enum Buttons {
+    Green = 0,
+    Red = 2,
+    Blue = 4,
+    Yellow = 6,
+    B = 64,
+    A = 65,
+    X = 66,
+    Y = 67
+}
 
 
 
@@ -217,15 +230,25 @@ class MainMenu extends GameObject
 
 class Button extends GameObject
 {
+    Letter = null
+    Color = null
+    constructor(color,letter)
+    {
+        base.constructor(null,Transform(0,40))
+        Letter = letter
+        Color = color
+    }
     function Draw()
     {
-        circ(transform.CenterX(), transform.CenterY(),12,2)
-        spr(32,transform.X(), transform.Y(),0,1,0,0,2,2)
+        print(color,40,40)
+        #circ(transform.CenterX(), transform.CenterY(),5,2)
+       spr(Color,transform.CenterX(), transform.CenterY(),0,1,0,0,2,2)
+       spr(Letter,transform.X()+12, transform.Y()+12,0,1,0,0)
     }
 
     function Update()
     {
-        transform.x -= 2
+        transform.x -= 1
         if (transform.x < -20)
             transform.x = 260
     }
@@ -246,18 +269,39 @@ class BeatLine extends GameObject
 class ActionLane extends GameObject
 {
     beatLine = null
-    B = null
+    lane = null
 
     constructor()
     {
+        lane = []
         base.constructor()
-        B = Button()
+        AddButton()
         beatLine = BeatLine(null, Transform(50,10,2),null)
     }
 
     function Draw()
     {
-        print(DistanceCenterX(B,beatLine),50,50,4)
+        print(DistanceCenterX(lane[0],beatLine),50,50,4)
+    }
+
+    function AddButton()
+    {
+        local choice = rand() % 4
+
+        if (choice == 0)
+            lane.append(Button(Buttons.Blue, Buttons.X))
+
+
+        if (choice == 1)
+            lane.append(Button(Buttons.Green, Buttons.A))
+
+
+        if (choice == 2)
+            lane.append(Button(Buttons.Yellow, Buttons.Y))
+
+
+        if (choice == 3)
+            lane.append(Button(Buttons.Red, Buttons.B))
     }
 }
 
@@ -269,7 +313,7 @@ local menu = MainMenu(player)
 
 local enemy = GameObject()
 
-local actionLane = ActionLane()
+local actionLane = ActionLane( )
 
 
 player.transform.x = SCREEN_WIDTH * 0.1
@@ -291,7 +335,10 @@ function TIC()
 	GRAPHICS_PIPELINE()
 	UPDATE_PIPELINE()
 	if ( btnp(2) )
+	{
 		menu.Prev()
+		actionLane.AddButton()
+	}
 
 	if (btnp(3))
 		menu.Next()
@@ -327,18 +374,22 @@ function UPDATE_PIPELINE()
 }
 
 // <TILES>
-// 000:0000000000000000000000000000000000000ddd0000dddd000ddddd000ddddd
-// 001:00000000000000000000000000000000ddd00000dddd0000ddddd000ddddd000
-// 002:0000000000000000000000000000000000000222000022220002222200022222
-// 003:0000000000000000000000000000000022200000222200002222200022222000
-// 004:0000000000000000000000000000000000000bbb0000bbbb000bbbbb000bbbbb
-// 005:00000000000000000000000000000000bbb00000bbbb0000bbbbb000bbbbb000
-// 016:000ddddd000ddddd000ddddd0000dddd00000ddd000000000000000000000000
-// 017:ddddd000ddddd000ddddd000dddd0000ddd00000000000000000000000000000
-// 018:0002222200022222000222220000222200000222000000000000000000000000
-// 019:2222200022222000222220002222000022200000000000000000000000000000
-// 020:000bbbbb000bbbbb000bbbbb0000bbbb00000bbb000000000000000000000000
-// 021:bbbbb000bbbbb000bbbbb000bbbb0000bbb00000000000000000000000000000
+// 000:00000ddd000ddddd00dddddd0ddddddd0ddddddddddddddddddddddddddddddd
+// 001:ddd00000ddddd000dddddd00ddddddd0ddddddd0dddddddddddddddddddddddd
+// 002:0000022200022222002222220222222202222222222222222222222222222222
+// 003:2220000022222000222222002222222022222220222222222222222222222222
+// 004:00000bbb000bbbbb00bbbbbb0bbbbbbb0bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+// 005:bbb00000bbbbb000bbbbbb00bbbbbbb0bbbbbbb0bbbbbbbbbbbbbbbbbbbbbbbb
+// 006:0000044400044444004444440444444404444444444444444444444444444444
+// 007:4440000044444000444444004444444044444440444444444444444444444444
+// 016:dddddddddddddddddddddddd0ddddddd0ddddddd00dddddd000ddddd00000ddd
+// 017:ddddddddddddddddddddddddddddddd0ddddddd0dddddd00ddddd000ddd00000
+// 018:2222222222222222222222220222222202222222002222220002222200000222
+// 019:2222222222222222222222222222222022222220222222002222200022200000
+// 020:bbbbbbbbbbbbbbbbbbbbbbbb0bbbbbbb0bbbbbbb00bbbbbb000bbbbb00000bbb
+// 021:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb0bbbbbbb0bbbbbb00bbbbb000bbb00000
+// 022:4444444444444444444444440444444404444444004444440004444400000444
+// 023:4444444444444444444444444444444044444440444444004444400044400000
 // 032:000000000000000000000ccc0000c0000000c0000000c0000000c0000000c000
 // 033:0000000000000000cc00000000c0000000c0000000c0000000c000000c000000
 // 034:000000000000000c000000c0000000c000000c0000000c0000000c000000cccc
@@ -354,6 +405,10 @@ function UPDATE_PIPELINE()
 // 052:0000000c000000c000000c000000c000000c000000c000000000000000000000
 // 053:c00000000c00000000c00000000c00000000c00000000c000000000000000000
 // 055:c0000000c0000000c0000000c0000000c0000000000000000000000000000000
+// 064:5555550050000550500005505555550050000550500005505555550000000000
+// 065:0055500005555500555055505500055055000550555555505500055000000000
+// 066:5500005555500555055555500055550000555500055555505550055555000055
+// 067:5500550055005500550055000555500000550000005500000055000000550000
 // </TILES>
 
 // <WAVES>

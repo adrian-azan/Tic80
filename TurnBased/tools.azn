@@ -10,6 +10,8 @@ function SortByDepth(a,b)
 
 function DistanceX(obj1, obj2)
 {
+    if (obj1.transform == null || obj2.transform == null)
+        return -1
     return abs(obj1.transform.X() - obj2.transform.X())
 }
 

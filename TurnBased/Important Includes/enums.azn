@@ -1,0 +1,10 @@
+enum Buttons {
+    Green = 0,
+    Red = 2,
+    Blue = 4,
+    Yellow = 6,
+    B = 64,
+    A = 65,
+    X = 66,
+    Y = 67
+}

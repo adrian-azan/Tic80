@@ -1,0 +1,26 @@
+class Button extends GameObject
+{
+    Letter = null
+    Color = null
+    constructor(color,letter)
+    {
+        base.constructor(null,Transform(0,40))
+        Letter = letter
+        Color = color
+    }
+    function Draw()
+    {
+        print(color,40,40)
+        #circ(transform.CenterX(), transform.CenterY(),5,2)
+       spr(Color,transform.CenterX(), transform.CenterY(),0,1,0,0,2,2)
+       spr(Letter,transform.X()+12, transform.Y()+12,0,1,0,0)
+    }
+
+    function Update()
+    {
+        transform.x -= 1
+        if (transform.x < -20)
+            transform.x = 260
+    }
+}
+

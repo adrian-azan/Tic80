@@ -1,0 +1,38 @@
+class ActionLane extends GameObject
+{
+    beatLine = null
+    lane = null
+
+    constructor()
+    {
+        lane = []
+        base.constructor()
+        AddButton()
+        beatLine = BeatLine(null, Transform(50,10,2),null)
+    }
+
+    function Draw()
+    {
+        print(DistanceCenterX(lane[0],beatLine),50,50,4)
+    }
+
+    function AddButton()
+    {
+        local choice = rand() % 4
+
+        if (choice == 0)
+            lane.append(Button(Buttons.Blue, Buttons.X))
+
+
+        if (choice == 1)
+            lane.append(Button(Buttons.Green, Buttons.A))
+
+
+        if (choice == 2)
+            lane.append(Button(Buttons.Yellow, Buttons.Y))
+
+
+        if (choice == 3)
+            lane.append(Button(Buttons.Red, Buttons.B))
+    }
+}
