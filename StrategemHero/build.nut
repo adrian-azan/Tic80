@@ -10,7 +10,52 @@
 
 #require "JSONParser.class.nut:1.0.1"
 
-// [included board]
+// [TQ-Bundler: timer]
+
+// title:   game title
+// author:  game developer, email, etc.
+// desc:    short description
+// site:    website link
+// license: MIT License (change this to your license of choice)
+// version: 0.1
+// script:  squirrel
+
+
+class Timer
+{
+	length = null
+	start = null
+	
+	constructor(Length)
+	{
+		length = Length*1000
+		start = time()
+	}
+	
+	function isFinished()
+	{
+		if (time() - start > length)
+			return true
+		return false
+	}
+	
+	function reset()
+	{
+		start = time()
+	}
+	
+	function toString()
+	{
+		return format("%d",time(),start)
+	}
+	
+
+
+}
+
+// [/TQ-Bundler: timer]
+
+// [TQ-Bundler: board]
 
 
 #require "math"
@@ -22,7 +67,7 @@ class Board
 	score = null
 	health = null
 	playerInput = null
-	failed = null
+	failureFlash = null
 	
 	constructor()
 	{
@@ -30,7 +75,6 @@ class Board
 		score = 0
 		health = 100
 		playerInput = ""
-		failed = 0
 		
 		queue = []
 				
@@ -38,13 +82,15 @@ class Board
 		queue.push(Stratagem(4,">>>"))	
 		
 	}
+	
+	function Update()
+	{
+		Check()
+		Input()
+	}
 
 	function Draw()
-	{	
-	
-		if (failed > 0)
-			failed -= 1
-	
+	{		
 		for (local i = 0; i < queue.len(); i++)
 		{
 			queue[i].draw(i*64,0)
@@ -69,8 +115,8 @@ class Board
 				else if (_combo[i] == '<')
 					rotation = 3
 				
-				if (failed > 0)
-					spr(32, sideBuffer + 30*i + (math.rand() % 10 - 5), 80, 0, 2, 0,rotation,2,2)				
+				if (failureFlash != null && !failureFlash.isFinished())
+					spr(32, sideBuffer + 30*i + (rand() % 6 - 3), 80 + (rand() % 6 - 3), 0, 2, 0,rotation,2,2)				
 				else if (i < playerInput.len())
 					spr(0, sideBuffer + 30*i, 80, 0, 2, 0,rotation,2,2)
 				else
@@ -94,15 +140,10 @@ class Board
 			if (queue[0].comboCheck(playerInput) == -1)
 			{
 				playerInput = ""
-				failed = 30
+				failureFlash = Timer(1)
 			}
-			
-			print(playerInput,30,30)
 		}
 	}
-	
-	
-
 
 	function Input()
 	{
@@ -127,9 +168,10 @@ class Board
 		}		
 	}
 }
-// [/included board]
 
-// [included stratagem]
+// [/TQ-Bundler: board]
+
+// [TQ-Bundler: stratagem]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -180,7 +222,9 @@ class Stratagem {
 		return 0;
 	}
 }
-// [/included stratagem]
+
+// [/TQ-Bundler: stratagem]
+
 
 t<-0
 x<-96
@@ -190,6 +234,8 @@ y<-24
 local game = Board();
 local test = Stratagem(2,"^^vv<>");
 
+local TIMERS = []
+
 function TIC()
 {
 	if (btn(0)) y=y-1;
@@ -198,11 +244,10 @@ function TIC()
 	if (btn(3)) x=x+1;
 
 	cls(0)
+	game.Update()
 	game.Draw()
-	game.Input()
 	
 	
-	game.Check()
 
 	if (t % 30 == 0)
 		game.health -= 1

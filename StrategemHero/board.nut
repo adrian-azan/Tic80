@@ -8,7 +8,7 @@ class Board
 	score = null
 	health = null
 	playerInput = null
-	failed = null
+	failureFlash = null
 	
 	constructor()
 	{
@@ -16,7 +16,6 @@ class Board
 		score = 0
 		health = 100
 		playerInput = ""
-		failed = 0
 		
 		queue = []
 				
@@ -24,13 +23,15 @@ class Board
 		queue.push(Stratagem(4,">>>"))	
 		
 	}
+	
+	function Update()
+	{
+		Check()
+		Input()
+	}
 
 	function Draw()
-	{	
-	
-		if (failed > 0)
-			failed -= 1
-	
+	{		
 		for (local i = 0; i < queue.len(); i++)
 		{
 			queue[i].draw(i*64,0)
@@ -55,8 +56,8 @@ class Board
 				else if (_combo[i] == '<')
 					rotation = 3
 				
-				if (failed > 0)
-					spr(32, sideBuffer + 30*i + (math.rand() % 10 - 5), 80, 0, 2, 0,rotation,2,2)				
+				if (failureFlash != null && !failureFlash.isFinished())
+					spr(32, sideBuffer + 30*i + (rand() % 6 - 3), 80 + (rand() % 6 - 3), 0, 2, 0,rotation,2,2)				
 				else if (i < playerInput.len())
 					spr(0, sideBuffer + 30*i, 80, 0, 2, 0,rotation,2,2)
 				else
@@ -80,15 +81,10 @@ class Board
 			if (queue[0].comboCheck(playerInput) == -1)
 			{
 				playerInput = ""
-				failed = 30
+				failureFlash = Timer(1)
 			}
-			
-			print(playerInput,30,30)
 		}
 	}
-	
-	
-
 
 	function Input()
 	{

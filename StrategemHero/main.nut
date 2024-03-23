@@ -5,8 +5,8 @@
 
 #require "JSONParser.class.nut:1.0.1"
 
+include("timer")
 include("board")
-
 include("stratagem")
 
 t<-0
@@ -17,6 +17,8 @@ y<-24
 local game = Board();
 local test = Stratagem(2,"^^vv<>");
 
+local TIMERS = []
+
 function TIC()
 {
 	if (btn(0)) y=y-1;
@@ -25,11 +27,10 @@ function TIC()
 	if (btn(3)) x=x+1;
 
 	cls(0)
+	game.Update()
 	game.Draw()
-	game.Input()
 	
 	
-	game.Check()
 
 	if (t % 30 == 0)
 		game.health -= 1
