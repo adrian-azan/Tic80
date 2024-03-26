@@ -13,10 +13,10 @@ class StratagemStorage
 	{
 		allStratagems = {}
 		
-		allStratagems["Backpack"] <- [Stratagem(2,"v^^v^"),
-		StratagemDuo(4,6,"v<v^^v"),StratagemDuo(4,8,"v^<^>>"),
-		StratagemDuo(4,10,"v^<^>v"),StratagemDuo(4,12,"v<vv^<"),
-		StratagemDuo(4,14,"v^<><>")]
+		allStratagems["Backpack"] <- [Stratagem(2,"v^^v^","LIFT-850 Jump Pack"),
+		StratagemDuo(4,6,"v<v^^v","B-1 Supply Pack"),StratagemDuo(4,8,"v^<^>>","AX/LAS-5 \"Gaurd Dog\" Rover"),
+		StratagemDuo(4,10,"v^<^>v","AX/AR-23 \"Guard Dog\""),StratagemDuo(4,12,"v<vv^<","SH-20 Ballistic Shield Backpack"),
+		StratagemDuo(4,14,"v^<><>","SH-32 Shield Generator Pack")]
 	}
 	
 	

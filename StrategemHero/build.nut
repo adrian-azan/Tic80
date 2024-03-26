@@ -69,11 +69,13 @@ class Timer
 class Stratagem {
 	_spriteId = null
 	_combo = null
+	_name = null
 	
-	constructor(spriteId, combo)
+	constructor(spriteId, combo,name)
 	{
 		_spriteId = spriteId
 		_combo = combo
+		_name = name
 	}
 	
 	
@@ -81,6 +83,7 @@ class Stratagem {
 	{
 		spr(_spriteId,x,y,14,3,0,0,2,2)
 	}
+	
 	
 	function combo()
 	{
@@ -120,10 +123,10 @@ class StratagemDuo extends Stratagem
 {
 	_additionalSpriteId = null
 	
-	constructor(spriteId, additionalSpriteId, combo)
+	constructor(spriteId, additionalSpriteId, combo,name)
 	{
 	
-		base.constructor(spriteId,combo)
+		base.constructor(spriteId,combo,name)
 		
 		_additionalSpriteId = additionalSpriteId
 	}
@@ -157,10 +160,10 @@ class StratagemStorage
 	{
 		allStratagems = {}
 		
-		allStratagems["Backpack"] <- [Stratagem(2,"v^^v^"),
-		StratagemDuo(4,6,"v<v^^v"),StratagemDuo(4,8,"v^<^>>"),
-		StratagemDuo(4,10,"v^<^>v"),StratagemDuo(4,12,"v<vv^<"),
-		StratagemDuo(4,14,"v^<><>")]
+		allStratagems["Backpack"] <- [Stratagem(2,"v^^v^","LIFT-850 Jump Pack"),
+		StratagemDuo(4,6,"v<v^^v","B-1 Supply Pack"),StratagemDuo(4,8,"v^<^>>","AX/LAS-5 \"Gaurd Dog\" Rover"),
+		StratagemDuo(4,10,"v^<^>v","AX/AR-23 \"Guard Dog\""),StratagemDuo(4,12,"v<vv^<","SH-20 Ballistic Shield Backpack"),
+		StratagemDuo(4,14,"v^<><>","SH-32 Shield Generator Pack")]
 	}
 	
 	
@@ -222,15 +225,16 @@ class Board
 	}
 
 	function Draw()
-	{		
+	{
 		for (local i = 0; i < queue.len(); i++)
 		{
-			queue[i].draw(i*64+10,5)
+			queue[i].draw(i*64+15,5)
 		}
 	
 		if (queue.len() > 0)
 		{
 			local _combo = queue[0].combo()
+			local name = queue[0]._name
 
 			local comboWidth = 25*_combo.len()
 			local sideBuffer = (240-comboWidth)/2
@@ -247,19 +251,29 @@ class Board
 				else if (value == '<')
 					rotation = 3
 				
-				trace(format("%d %c -> %d",i, value, rotation))
-
-				
 				if (failureFlash != null && !failureFlash.isFinished())
-					spr(32, sideBuffer + 25*i + (rand() % 6 - 3), 80 + (rand() % 6 - 3), 0, 1, 0,rotation,2,2)				
+					spr(32, sideBuffer + 25*i + (rand() % 6 - 3), 100 + (rand() % 6 - 3), 0, 1, 0,rotation,2,2)				
 				else if (i < playerInput.len())
-					spr(0, sideBuffer + 25*i, 80, 0, 1, 0,rotation,2,2)
+					spr(0, sideBuffer + 25*i, 100, 0, 1, 0,rotation,2,2)
 				else
-					spr(64, sideBuffer + 25*i, 80, 0, 1, 0,rotation,2,2)
+					spr(64, sideBuffer + 25*i, 100, 0, 1, 0,rotation,2,2)
 			}
+			
+			local nameWidth = print(name,0,-10)
+			local nameSideBuffer = (240-nameWidth)/2
+			
+			
+			rect(20,65,200,15,4)
+			print(name,nameSideBuffer,70)
 		}
-		rect(20,120,200,15,13)
-		rect(20,120,200 * (health*0.01),15,4)
+		rect(20,120,200,10,13)
+		
+		if(health<15)
+			rect(20,120,200 * (health*0.01),10,2)
+		else if (health < 30)
+			rect(20,120,200 * (health*0.01),10,3)
+		else
+			rect(20,120,200 * (health*0.01),10,4)
 	}
 	
 	function Check()
@@ -269,6 +283,7 @@ class Board
 			if (queue[0].comboCheck(playerInput)== 1)
 			{
 				playerInput = ""
+				health +=5
 				queue.remove(0)
 			}
 			
@@ -339,7 +354,7 @@ function TIC()
 	
 
 	if (t % 30 == 0)
-		game.health -= 1
+		game.health -= 2.5
 	t=t+1
 }
 

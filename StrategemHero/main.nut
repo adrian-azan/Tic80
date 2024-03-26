@@ -35,7 +35,7 @@ function TIC()
 	
 
 	if (t % 30 == 0)
-		game.health -= 1
+		game.health -= 2.5
 	t=t+1
 }
 

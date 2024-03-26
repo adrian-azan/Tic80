@@ -10,11 +10,13 @@
 class Stratagem {
 	_spriteId = null
 	_combo = null
+	_name = null
 	
-	constructor(spriteId, combo)
+	constructor(spriteId, combo,name)
 	{
 		_spriteId = spriteId
 		_combo = combo
+		_name = name
 	}
 	
 	
@@ -22,6 +24,7 @@ class Stratagem {
 	{
 		spr(_spriteId,x,y,14,3,0,0,2,2)
 	}
+	
 	
 	function combo()
 	{

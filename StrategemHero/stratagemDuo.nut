@@ -10,10 +10,10 @@ class StratagemDuo extends Stratagem
 {
 	_additionalSpriteId = null
 	
-	constructor(spriteId, additionalSpriteId, combo)
+	constructor(spriteId, additionalSpriteId, combo,name)
 	{
 	
-		base.constructor(spriteId,combo)
+		base.constructor(spriteId,combo,name)
 		
 		_additionalSpriteId = additionalSpriteId
 	}
