@@ -10,7 +10,7 @@
 
 #require "JSONParser.class.nut:1.0.1"
 
-// [included timer]
+// [TQ-Bundler: timer]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -52,8 +52,10 @@ class Timer
 
 
 }
-// [/included timer]
-// [included stratagem]
+
+// [/TQ-Bundler: timer]
+
+// [TQ-Bundler: stratagem]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -101,8 +103,10 @@ class Stratagem {
 		return 0;
 	}
 }
-// [/included stratagem]
-// [included stratagemDuo]
+
+// [/TQ-Bundler: stratagem]
+
+// [TQ-Bundler: stratagemDuo]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -133,8 +137,10 @@ class StratagemDuo extends Stratagem
 	}
 }
 
-// [/included stratagemDuo]
-// [included stratagemStorage]
+
+// [/TQ-Bundler: stratagemDuo]
+
+// [TQ-Bundler: stratagemStorage]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -151,8 +157,10 @@ class StratagemStorage
 	{
 		allStratagems = {}
 		
-		allStratagems["Backpack"] <- [Stratagem(4,"<<^"),Stratagem(2,"^vv^^"),
-		StratagemDuo(4,6,"v<v^^v")]
+		allStratagems["Backpack"] <- [Stratagem(2,"v^^v^"),
+		StratagemDuo(4,6,"v<v^^v"),StratagemDuo(4,8,"v^<^>>"),
+		StratagemDuo(4,10,"v^<^>v"),StratagemDuo(4,12,"v<vv^<"),
+		StratagemDuo(4,14,"v^<><>")]
 	}
 	
 	
@@ -177,8 +185,10 @@ class StratagemStorage
 
 
 }
-// [/included stratagemStorage]
-// [included board]
+
+// [/TQ-Bundler: stratagemStorage]
+
+// [TQ-Bundler: board]
 
 
 #require "math"
@@ -221,29 +231,31 @@ class Board
 		if (queue.len() > 0)
 		{
 			local _combo = queue[0].combo()
-			print(_combo)
 
-			local comboWidth = 30*_combo.len()
+			local comboWidth = 25*_combo.len()
 			local sideBuffer = (240-comboWidth)/2
-			local rotation = 0;
 			
 			
-			for (local i = 0; i < _combo.len(); i++)
+			foreach(i, value in _combo)
 			{
-				trace(format("%d: %d",i,_combo[i].tointeger()))
-				if (_combo[i] == '>')
+				local rotation = 0;
+
+				if (value == '>')
 					rotation = 1
-				else if (_combo[i] == 'v')
+				else if (value == 'v')
 					rotation = 2
-				else if (_combo[i] == '<')
+				else if (value == '<')
 					rotation = 3
 				
+				trace(format("%d %c -> %d",i, value, rotation))
+
+				
 				if (failureFlash != null && !failureFlash.isFinished())
-					spr(32, sideBuffer + 30*i + (rand() % 6 - 3), 80 + (rand() % 6 - 3), 0, 2, 0,rotation,2,2)				
+					spr(32, sideBuffer + 25*i + (rand() % 6 - 3), 80 + (rand() % 6 - 3), 0, 1, 0,rotation,2,2)				
 				else if (i < playerInput.len())
-					spr(0, sideBuffer + 30*i, 80, 0, 2, 0,rotation,2,2)
+					spr(0, sideBuffer + 25*i, 80, 0, 1, 0,rotation,2,2)
 				else
-					spr(64, sideBuffer + 30*i, 80, 0, 2, 0,rotation,2,2)
+					spr(64, sideBuffer + 25*i, 80, 0, 1, 0,rotation,2,2)
 			}
 		}
 		rect(20,120,200,15,13)
@@ -299,7 +311,9 @@ class Board
 		}		
 	}
 }
-// [/included board]
+
+// [/TQ-Bundler: board]
+
 
 
 t<-0

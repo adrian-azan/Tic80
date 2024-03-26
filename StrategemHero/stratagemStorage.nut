@@ -13,8 +13,10 @@ class StratagemStorage
 	{
 		allStratagems = {}
 		
-		allStratagems["Backpack"] <- [Stratagem(4,"<<^"),Stratagem(2,"^vv^^"),
-		StratagemDuo(4,6,"v<v^^v")]
+		allStratagems["Backpack"] <- [Stratagem(2,"v^^v^"),
+		StratagemDuo(4,6,"v<v^^v"),StratagemDuo(4,8,"v^<^>>"),
+		StratagemDuo(4,10,"v^<^>v"),StratagemDuo(4,12,"v<vv^<"),
+		StratagemDuo(4,14,"v^<><>")]
 	}
 	
 	
