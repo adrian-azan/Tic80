@@ -9,6 +9,8 @@ class Board
 	health = null
 	playerInput = null
 	failureFlash = null
+	stratagemPool = null
+	
 	
 	constructor()
 	{
@@ -16,11 +18,8 @@ class Board
 		score = 0
 		health = 100
 		playerInput = ""
-		
-		queue = []
-				
-		queue.push(Stratagem(2,"^^vv<>"))
-		queue.push(Stratagem(4,">>>"))	
+		stratagemPool = StratagemStorage()
+		queue = stratagemPool.getRandomStratagems(3)
 		
 	}
 	
@@ -34,13 +33,13 @@ class Board
 	{		
 		for (local i = 0; i < queue.len(); i++)
 		{
-			queue[i].draw(i*64,0)
+			queue[i].draw(i*64+10,5)
 		}
 	
 		if (queue.len() > 0)
 		{
 			local _combo = queue[0].combo()
-
+			print(_combo)
 
 			local comboWidth = 30*_combo.len()
 			local sideBuffer = (240-comboWidth)/2
@@ -49,6 +48,7 @@ class Board
 			
 			for (local i = 0; i < _combo.len(); i++)
 			{
+				trace(format("%d: %d",i,_combo[i].tointeger()))
 				if (_combo[i] == '>')
 					rotation = 1
 				else if (_combo[i] == 'v')
@@ -78,16 +78,24 @@ class Board
 				queue.remove(0)
 			}
 			
-			if (queue[0].comboCheck(playerInput) == -1)
+			else if (queue[0].comboCheck(playerInput) == -1)
 			{
 				playerInput = ""
 				failureFlash = Timer(1)
 			}
 		}
+		
+		if (queue.len() == 0)
+		{
+			queue =stratagemPool.getRandomStratagems(5)
+		}
+			
 	}
 
 	function Input()
 	{
+		if (failureFlash != null && !failureFlash.isFinished())
+			return;
 		if (keyp(58) && queue.len() > 0)
 		{
 			playerInput += "^"
