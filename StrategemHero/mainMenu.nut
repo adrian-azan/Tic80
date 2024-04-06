@@ -9,10 +9,12 @@
 class MainMenu
 {
 	menuText = null
+	choice = null
 
 	constructor()
 	{
 		 menuText = ["Play","Settings","Quit"]
+		 choice = 0;
 	}
 
 	function draw()

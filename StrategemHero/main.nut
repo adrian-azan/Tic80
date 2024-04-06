@@ -11,6 +11,7 @@ include("stratagem")
 include("stratagemDuo")
 include("stratagemStorage")
 include("board")
+include("menuPointer")
 include("mainMenu")
 
 
@@ -33,10 +34,10 @@ function TIC()
 	if (btn(3)) x=x+1;
 
 	cls()
-	//game.Update()
-	//game.Draw()
+	game.Update()
+	game.Draw()
 	
-	menuTest.draw()
+	//menuTest.draw()
 	
 
 	if (t % 30 == 0)
