@@ -1,4 +1,3 @@
-
 #require "math"
 
 class ClassicMode
@@ -25,8 +24,8 @@ class ClassicMode
 	
 	function update()
 	{
-		Check()
-		Input()
+		check()
+		input()
 
 		if (timer.isFinished())
 			health -= 5
@@ -34,7 +33,6 @@ class ClassicMode
 
 	function draw()
 	{
-
 		for (local i = 0; i < queue.len(); i++)
 		{
 			queue[i].draw(i*64+15,5)
@@ -83,16 +81,9 @@ class ClassicMode
 			rect(20,120,200 * (health*0.01),10,3)
 		else
 			rect(20,120,200 * (health*0.01),10,4)
-
-
-
-		//trace(health,20,20)
-
-
-
 	}
 	
-	function Check()
+	function check()
 	{
 		if (queue.len() > 0)
 		{
@@ -112,15 +103,15 @@ class ClassicMode
 		
 		if (queue.len() == 0)
 		{
-			queue =stratagemPool.getRandomStratagems(5)
-		}
-			
+			queue = stratagemPool.getRandomStratagems(5)
+		}			
 	}
 
-	function Input()
+	function input()
 	{
 		if (failureFlash != null && !failureFlash.isFinished())
 			return;
+			
 		if ((keyp(58) || btnp(6)) && queue.len() > 0)
 		{
 			playerInput += "^"

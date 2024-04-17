@@ -15,12 +15,6 @@ include("MenuPointer")
 include("StateMainMenu")
 
 
-
-t<-0
-x<-96
-y<-24
-
-
 local game = ClassicMode()
 local mainMenu = StateMainMenu()
 local settingsMenu = null
@@ -33,17 +27,10 @@ local TIMERS = []
 
 function TIC()
 {
-	if (btn(0)) y=y-1;
-	if (btn(1)) y=y+1;
-	if (btn(2)) x=x-1;
-	if (btn(3)) x=x+1;
-
 	cls()
 
 	game_state[GAME_STATE].update()
 	game_state[GAME_STATE].draw()
-	
-
 }
 
 

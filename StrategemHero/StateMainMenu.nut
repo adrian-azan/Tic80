@@ -1,11 +1,3 @@
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
-
 class StateMainMenu
 {
 	menuText = null
@@ -20,8 +12,6 @@ class StateMainMenu
 	function draw()
 	{
 		drawBoxes()
-		print(choice,20,20)
-			
 	}
 
 	function drawBoxes()
@@ -50,9 +40,6 @@ class StateMainMenu
 			{
 				rect(left+2,top+2,76,12,4)
 			}
-
-			print(menuText[i],nameSideBuffer,top+6)
-
 		}
 	}
 
@@ -71,7 +58,6 @@ class StateMainMenu
 
 		if (keyp(17) && choice.eq(0))
 		{
-			trace("butts")
 			GAME_STATE = "Game"
 		}
 	}
