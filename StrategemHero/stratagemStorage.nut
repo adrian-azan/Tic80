@@ -30,6 +30,4 @@ class StratagemStorage
 		return output;
 		
 	}
-
-
 }

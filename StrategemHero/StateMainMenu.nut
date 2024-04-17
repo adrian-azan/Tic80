@@ -36,6 +36,7 @@ class StateMainMenu
 			local nameWidth = print(menuText[i],0,-10)
 			local nameSideBuffer = (240-nameWidth)/2
 
+			//Highlight selected option
 			if (choice.eq(i))
 			{
 				rect(left+2,top+2,76,12,4)

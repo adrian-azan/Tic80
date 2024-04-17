@@ -87,6 +87,7 @@ class ClassicMode
 	{
 		if (queue.len() > 0)
 		{
+			//Complete Stratagem
 			if (queue[0].comboCheck(playerInput)== 1)
 			{
 				playerInput = ""
@@ -101,6 +102,7 @@ class ClassicMode
 			}
 		}
 		
+		//Refresh upcoming Stratagems
 		if (queue.len() == 0)
 		{
 			queue = stratagemPool.getRandomStratagems(5)
@@ -111,7 +113,7 @@ class ClassicMode
 	{
 		if (failureFlash != null && !failureFlash.isFinished())
 			return;
-			
+
 		if ((keyp(58) || btnp(6)) && queue.len() > 0)
 		{
 			playerInput += "^"

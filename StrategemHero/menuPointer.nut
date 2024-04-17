@@ -32,10 +32,4 @@ class menuPointer
 	{
 		return current.tostring()
 	}
-
-	function _cmp(right)
-	{
-		trace (current==right)
-		return current == right
-	}	
 }
