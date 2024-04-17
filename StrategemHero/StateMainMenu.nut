@@ -41,6 +41,8 @@ class StateMainMenu
 			{
 				rect(left+2,top+2,76,12,4)
 			}
+
+			print(menuText[i],nameSideBuffer,top+6)
 		}
 	}
 

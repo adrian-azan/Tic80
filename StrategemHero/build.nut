@@ -20,15 +20,6 @@ local GAME_STATE = STATE_GAME
 // [/included Constants]
 // [included Timer]
 
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
-
-
 class Timer
 {
 	length = null
@@ -56,13 +47,9 @@ class Timer
 	{
 		return format("%d",time(),start)
 	}
-	
-
-
 }
 // [/included Timer]
 // [included RepeatTimer]
-
 
 class RepeatTimer extends Timer
 {
@@ -79,15 +66,6 @@ class RepeatTimer extends Timer
 }
 // [/included RepeatTimer]
 // [included Stratagem]
-
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
-
 
 class Stratagem {
 	_spriteId = null
@@ -132,14 +110,6 @@ class Stratagem {
 // [/included Stratagem]
 // [included StratagemDuo]
 
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
-
 class StratagemDuo extends Stratagem
 {
 	_additionalSpriteId = null
@@ -163,14 +133,6 @@ class StratagemDuo extends Stratagem
 
 // [/included StratagemDuo]
 // [included StratagemStorage]
-
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
 
 class StratagemStorage
 {
@@ -204,12 +166,9 @@ class StratagemStorage
 		return output;
 		
 	}
-
-
 }
 // [/included StratagemStorage]
 // [included ClassicMode]
-
 
 #require "math"
 
@@ -237,8 +196,8 @@ class ClassicMode
 	
 	function update()
 	{
-		Check()
-		Input()
+		check()
+		input()
 
 		if (timer.isFinished())
 			health -= 5
@@ -246,7 +205,6 @@ class ClassicMode
 
 	function draw()
 	{
-
 		for (local i = 0; i < queue.len(); i++)
 		{
 			queue[i].draw(i*64+15,5)
@@ -295,19 +253,13 @@ class ClassicMode
 			rect(20,120,200 * (health*0.01),10,3)
 		else
 			rect(20,120,200 * (health*0.01),10,4)
-
-
-
-		//trace(health,20,20)
-
-
-
 	}
 	
-	function Check()
+	function check()
 	{
 		if (queue.len() > 0)
 		{
+			//Complete Stratagem
 			if (queue[0].comboCheck(playerInput)== 1)
 			{
 				playerInput = ""
@@ -322,17 +274,18 @@ class ClassicMode
 			}
 		}
 		
+		//Refresh upcoming Stratagems
 		if (queue.len() == 0)
 		{
-			queue =stratagemPool.getRandomStratagems(5)
-		}
-			
+			queue = stratagemPool.getRandomStratagems(5)
+		}			
 	}
 
-	function Input()
+	function input()
 	{
 		if (failureFlash != null && !failureFlash.isFinished())
 			return;
+
 		if ((keyp(58) || btnp(6)) && queue.len() > 0)
 		{
 			playerInput += "^"
@@ -361,14 +314,6 @@ class ClassicMode
 }
 // [/included ClassicMode]
 // [included MenuPointer]
-
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
 
 class menuPointer
 {
@@ -404,26 +349,9 @@ class menuPointer
 	{
 		return current.tostring()
 	}
-
-	function _cmp(right)
-	{
-		trace (current==right)
-		return current == right
-	}
-
-
-	
 }
 // [/included MenuPointer]
 // [included StateMainMenu]
-
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
 
 class StateMainMenu
 {
@@ -439,8 +367,6 @@ class StateMainMenu
 	function draw()
 	{
 		drawBoxes()
-		print(choice,20,20)
-			
 	}
 
 	function drawBoxes()
@@ -465,13 +391,13 @@ class StateMainMenu
 			local nameWidth = print(menuText[i],0,-10)
 			local nameSideBuffer = (240-nameWidth)/2
 
+			//Highlight selected option
 			if (choice.eq(i))
 			{
 				rect(left+2,top+2,76,12,4)
 			}
 
 			print(menuText[i],nameSideBuffer,top+6)
-
 		}
 	}
 
@@ -490,7 +416,6 @@ class StateMainMenu
 
 		if (keyp(17) && choice.eq(0))
 		{
-			trace("butts")
 			GAME_STATE = "Game"
 		}
 	}
@@ -501,11 +426,6 @@ class StateMainMenu
 
 
 // [/included StateMainMenu]
-t<-0
-x<-96
-y<-24
-
-
 local game = ClassicMode()
 local mainMenu = StateMainMenu()
 local settingsMenu = null
@@ -518,17 +438,10 @@ local TIMERS = []
 
 function TIC()
 {
-	if (btn(0)) y=y-1;
-	if (btn(1)) y=y+1;
-	if (btn(2)) x=x-1;
-	if (btn(3)) x=x+1;
-
 	cls()
 
 	game_state[GAME_STATE].update()
 	game_state[GAME_STATE].draw()
-	
-
 }
 
 
