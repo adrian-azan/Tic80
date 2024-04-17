@@ -9,8 +9,16 @@
 // script: squirrel
 
 #require "JSONParser.class.nut:1.0.1"
+// [included Constants]
 
-// [included timer]
+//Game State Values
+const STATE_MENU_MAIN = "MainMenu"
+const STATE_GAME = "Game"
+const STATE_MENU_SETTINGS = "SettingsMenu"
+
+local GAME_STATE = STATE_GAME
+// [/included Constants]
+// [included Timer]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -52,134 +60,25 @@ class Timer
 
 
 }
-// [/included timer]
-// [included prettyFont]
+// [/included Timer]
+// [included RepeatTimer]
 
-// title:  tiny 5x5 fonts and editor
-// author: lb_ii
-// desc:   simple editor for 5x5 fonts with samples in Cyrillic, Latin, Greek, Hebrew and even some Japanese writings
-// script: lua
 
-/* Tiny font's size is just 5x5 pixels.
--- It requires just 5x4 sprites/tiles.
-
--- Code usage sample:
---   LBFONTSTART = <TILE_ID>
---   lbprint("PRIVET, MIR;",42,100)
-
--- Supported letters:
-
--- +--UPPER MODIFIERS--+
--- |   |   |   |   |   |
--- | $ | ( | ' | ) | # |
--- |   |   |   |   |   |
--- +---+LETTER BASE+---+
--- |                   |
--- | +,-./012 3456789: |
--- | ;<=>?@AB CDEFGHIJ |
--- | KLMNOPQR STUVWXYZ |
--- |                   |
--- +--LOWER MODIFIERS--+
--- |   |   |   |   |   |
--- | ^ | [ | ` | ] | _ |
--- |   |   |   |   |   |
--- +--FONTS SWITCHERS--+
--- | abcdef ghijk      |
--- +-------------------+
-
--- Letter bases are mapped to 5x5 tiles,
--- which may be sprites of other letters
--- e.g. cyrillic, kana or runic stuff
-
--- Modifiers add extra pixels like
--- diacritic marks or just additional
--- pixels for letters bigger than 5x5,
--- e.g. 'Q' is good as "O" with "_" mod
-
--- Lowercase letters switches fonts,
--- e.g. "aPRIVET cIS RUSSIAN FOR HELLO"
-
-----------------------------------------
--- copy to your code to use tiny font --
---                                    --
--- you can remove unused fonts or mods--
--- to save some code space            --
---                                    --
--- | | | | | | | | | | | | | | | | | |--
--- V V V V V V V V V V V V V V V V V V-- */
-
-local LBFONTSTART = 278
-local LBFONTCOLOR = 15
-local LBSPACEWIDTH= 5
-local LBLINESTEP  = 7
-local LBFONTS = {
- a = 17,  // Cyrillic
- b = 97,  // Cyrillic Bold
- c = 22,  // Latin
- d = 102, // Latin Bold
- e = 27,  // Hebrew 
- f = 107, // Hebrew Bold
- g = 177, // Greek
- h = 182, // Greek & Math
- i = 273, // Japanese Katakana
- j = 278, // Japanese Hiragana
- k = 283, // Japanese Other
- l = 353, // Runic Slavic
-};
-local LBFONTMOD = {
-    "$": [0, -1],
-    "(": [1, -1],
-    "'": [2, -1],
-    ")": [3, -1],
-    "#": [4, -1],
-    "^": [0, 5],
-    "[": [1, 5],
-    "`": [2, 5],
-    "]": [3, 5],
-    "_": [4, 5]
-};
-
-function lbfont5x5(i,x,y)
+class RepeatTimer extends Timer
 {
-local c = LBFONTSTART;
-local X = x - (i % 8) * 5 % 8;
-local Y = y - floor(i / 8) * 5 + floor(i / 16) * 8;
-c = c + (i % 8) * 5 / 8 + floor(i / 16) % 8 * 16;
 
- clip(x,y,5,5)
- spr(c,X,Y,0)
- spr(c+1,X+8,Y,0)
- spr(c+16,X,Y+8,0)
- spr(c+17,X+8,Y+8,0)
+	function isFinished()
+	{
+		if (time() - start > length)
+		{
+			reset()
+			return true
+		}
+		return false
+	}
 }
-
-function lbprint(str,x,y)
-{
- local X = x-6
- foreach (c in str)
- {
-  
-  if (c in LBFONTMOD)
-  {
-    local m = LBFONTMOD[c]
-   clip()
-   pix(X+m[1],y+m[2],LBFONTCOLOR)
- }
-  else if (c == '|')
-   X,y = x-6,y+LBLINESTEP
-  else if (c == ' ')
-   X = X+LBSPACEWIDTH
-
-  else
-   X = X+6
-   lbfont5x5(c,X,y)
-  
- }
- clip()
-}
-
-// [/included prettyFont]
-// [included stratagem]
+// [/included RepeatTimer]
+// [included Stratagem]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -230,8 +129,8 @@ class Stratagem {
 		return 0;
 	}
 }
-// [/included stratagem]
-// [included stratagemDuo]
+// [/included Stratagem]
+// [included StratagemDuo]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -262,8 +161,8 @@ class StratagemDuo extends Stratagem
 	}
 }
 
-// [/included stratagemDuo]
-// [included stratagemStorage]
+// [/included StratagemDuo]
+// [included StratagemStorage]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -308,13 +207,13 @@ class StratagemStorage
 
 
 }
-// [/included stratagemStorage]
-// [included board]
+// [/included StratagemStorage]
+// [included ClassicMode]
 
 
 #require "math"
 
-class Board
+class ClassicMode
 {
 	round = null
 	queue = null
@@ -323,7 +222,7 @@ class Board
 	playerInput = null
 	failureFlash = null
 	stratagemPool = null
-	
+	timer = null
 	
 	constructor()
 	{
@@ -332,18 +231,22 @@ class Board
 		health = 100
 		playerInput = ""
 		stratagemPool = StratagemStorage()
-		queue = stratagemPool.getRandomStratagems(3)
-		
+		queue = stratagemPool.getRandomStratagems(3)	
+		timer= RepeatTimer(1)
 	}
 	
-	function Update()
+	function update()
 	{
 		Check()
 		Input()
+
+		if (timer.isFinished())
+			health -= 5
 	}
 
-	function Draw()
+	function draw()
 	{
+
 		for (local i = 0; i < queue.len(); i++)
 		{
 			queue[i].draw(i*64+15,5)
@@ -392,6 +295,13 @@ class Board
 			rect(20,120,200 * (health*0.01),10,3)
 		else
 			rect(20,120,200 * (health*0.01),10,4)
+
+
+
+		//trace(health,20,20)
+
+
+
 	}
 	
 	function Check()
@@ -423,29 +333,34 @@ class Board
 	{
 		if (failureFlash != null && !failureFlash.isFinished())
 			return;
-		if (keyp(58) && queue.len() > 0)
+		if ((keyp(58) || btnp(6)) && queue.len() > 0)
 		{
 			playerInput += "^"
 		}
 		
-		else if (keyp(59) && queue.len() > 0)
+		else if ((keyp(59) || btnp(5)) && queue.len() > 0)
 		{
 			playerInput += "v"
 		}
 		
-		else if (keyp(60) && queue.len() > 0)
+		else if ((keyp(60) || btnp(7)) && queue.len() > 0)
 		{
 			playerInput += "<"
 		}
 		
-		else if (keyp(61) && queue.len() > 0)
+		else if ((keyp(61) || btnp(4)) && queue.len() > 0)
 		{
 			playerInput += ">"
-		}		
+		}	
+
+		else if (keyp(17))
+		{
+			GAME_STATE = "MainMenu"
+		}	
 	}
 }
-// [/included board]
-// [included mainMenu]
+// [/included ClassicMode]
+// [included MenuPointer]
 
 // title:   game title
 // author:  game developer, email, etc.
@@ -455,19 +370,76 @@ class Board
 // version: 0.1
 // script:  squirrel
 
-class MainMenu
+class menuPointer
+{
+	current = null
+	limit = null
+
+	constructor (_limit)
+	{
+		current = 0 
+		limit = _limit
+	}
+
+	function eq(value)
+	{
+		return current == value
+	}
+	
+	function _add(right)
+	{
+		current = (current + right) % limit
+		return this
+	}
+	
+	function _sub(right)
+	{
+		current = (current - right);
+		if (current < 0)
+			current = limit - 1
+		return this
+	}
+
+	function _tostring()
+	{
+		return current.tostring()
+	}
+
+	function _cmp(right)
+	{
+		trace (current==right)
+		return current == right
+	}
+
+
+	
+}
+// [/included MenuPointer]
+// [included StateMainMenu]
+
+// title:   game title
+// author:  game developer, email, etc.
+// desc:    short description
+// site:    website link
+// license: MIT License (change this to your license of choice)
+// version: 0.1
+// script:  squirrel
+
+class StateMainMenu
 {
 	menuText = null
+	choice = null
 
 	constructor()
 	{
 		 menuText = ["Play","Settings","Quit"]
+		 choice = menuPointer(3);
 	}
 
 	function draw()
 	{
 		drawBoxes()
-			
+		print(choice,20,20)
 			
 	}
 
@@ -493,22 +465,54 @@ class MainMenu
 			local nameWidth = print(menuText[i],0,-10)
 			local nameSideBuffer = (240-nameWidth)/2
 
-					print(menuText[i],nameSideBuffer,top+6)
+			if (choice.eq(i))
+			{
+				rect(left+2,top+2,76,12,4)
+			}
+
+			print(menuText[i],nameSideBuffer,top+6)
 
 		}
 	}
+
+
+	function update()
+	{
+		if (keyp(59) || btnp(1))
+		{
+			choice += 1
+		}
+
+		else if (keyp(58) || btnp(0))
+		{
+			choice -= 1
+		}
+
+		if (keyp(17) && choice.eq(0))
+		{
+			trace("butts")
+			GAME_STATE = "Game"
+		}
+	}
 }
-// [/included mainMenu]
 
 
 
+
+
+// [/included StateMainMenu]
 t<-0
 x<-96
 y<-24
 
 
-local game = Board();
-local menuTest = MainMenu()
+local game = ClassicMode()
+local mainMenu = StateMainMenu()
+local settingsMenu = null
+
+local game_state = {}
+game_state[STATE_MENU_MAIN] <- mainMenu
+game_state[STATE_GAME] <- game
 
 local TIMERS = []
 
@@ -520,15 +524,11 @@ function TIC()
 	if (btn(3)) x=x+1;
 
 	cls()
-	//game.Update()
-	//game.Draw()
-	
-	menuTest.draw()
+
+	game_state[GAME_STATE].update()
+	game_state[GAME_STATE].draw()
 	
 
-	if (t % 30 == 0)
-		game.health -= 2.5
-	t=t+1
 }
 
 

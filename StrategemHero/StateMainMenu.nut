@@ -6,7 +6,7 @@
 // version: 0.1
 // script:  squirrel
 
-class MainMenu
+class StateMainMenu
 {
 	menuText = null
 	choice = null
@@ -14,13 +14,13 @@ class MainMenu
 	constructor()
 	{
 		 menuText = ["Play","Settings","Quit"]
-		 choice = 0;
+		 choice = menuPointer(3);
 	}
 
 	function draw()
 	{
 		drawBoxes()
-			
+		print(choice,20,20)
 			
 	}
 
@@ -46,8 +46,37 @@ class MainMenu
 			local nameWidth = print(menuText[i],0,-10)
 			local nameSideBuffer = (240-nameWidth)/2
 
-					print(menuText[i],nameSideBuffer,top+6)
+			if (choice.eq(i))
+			{
+				rect(left+2,top+2,76,12,4)
+			}
+
+			print(menuText[i],nameSideBuffer,top+6)
 
 		}
 	}
+
+
+	function update()
+	{
+		if (keyp(59) || btnp(1))
+		{
+			choice += 1
+		}
+
+		else if (keyp(58) || btnp(0))
+		{
+			choice -= 1
+		}
+
+		if (keyp(17) && choice.eq(0))
+		{
+			trace("butts")
+			GAME_STATE = "Game"
+		}
+	}
 }
+
+
+
+

@@ -4,15 +4,15 @@
 // script: squirrel
 
 #require "JSONParser.class.nut:1.0.1"
-
-include("timer")
-include("prettyFont")
-include("stratagem")
-include("stratagemDuo")
-include("stratagemStorage")
-include("board")
-include("menuPointer")
-include("mainMenu")
+include("Constants")
+include("Timer")
+include("RepeatTimer")
+include("Stratagem")
+include("StratagemDuo")
+include("StratagemStorage")
+include("ClassicMode")
+include("MenuPointer")
+include("StateMainMenu")
 
 
 
@@ -21,8 +21,13 @@ x<-96
 y<-24
 
 
-local game = Board();
-local menuTest = MainMenu()
+local game = ClassicMode()
+local mainMenu = StateMainMenu()
+local settingsMenu = null
+
+local game_state = {}
+game_state[STATE_MENU_MAIN] <- mainMenu
+game_state[STATE_GAME] <- game
 
 local TIMERS = []
 
@@ -34,15 +39,11 @@ function TIC()
 	if (btn(3)) x=x+1;
 
 	cls()
-	game.Update()
-	game.Draw()
-	
-	//menuTest.draw()
+
+	game_state[GAME_STATE].update()
+	game_state[GAME_STATE].draw()
 	
 
-	if (t % 30 == 0)
-		game.health -= 2.5
-	t=t+1
 }
 
 
