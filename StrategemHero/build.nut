@@ -9,17 +9,16 @@
 // script: squirrel
 
 #require "JSONParser.class.nut:1.0.1"
+// [included Constants]
 
-// [TQ-Bundler: timer]
+//Game State Values
+const STATE_MENU_MAIN = "MainMenu"
+const STATE_GAME = "Game"
+const STATE_MENU_SETTINGS = "SettingsMenu"
 
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
-
+local GAME_STATE = STATE_GAME
+// [/included Constants]
+// [included Timer]
 
 class Timer
 {
@@ -48,23 +47,25 @@ class Timer
 	{
 		return format("%d",time(),start)
 	}
-	
-
-
 }
+// [/included Timer]
+// [included RepeatTimer]
 
-// [/TQ-Bundler: timer]
+class RepeatTimer extends Timer
+{
 
-// [TQ-Bundler: stratagem]
-
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
-
+	function isFinished()
+	{
+		if (time() - start > length)
+		{
+			reset()
+			return true
+		}
+		return false
+	}
+}
+// [/included RepeatTimer]
+// [included Stratagem]
 
 class Stratagem {
 	_spriteId = null
@@ -106,18 +107,8 @@ class Stratagem {
 		return 0;
 	}
 }
-
-// [/TQ-Bundler: stratagem]
-
-// [TQ-Bundler: stratagemDuo]
-
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
+// [/included Stratagem]
+// [included StratagemDuo]
 
 class StratagemDuo extends Stratagem
 {
@@ -140,18 +131,8 @@ class StratagemDuo extends Stratagem
 	}
 }
 
-
-// [/TQ-Bundler: stratagemDuo]
-
-// [TQ-Bundler: stratagemStorage]
-
-// title:   game title
-// author:  game developer, email, etc.
-// desc:    short description
-// site:    website link
-// license: MIT License (change this to your license of choice)
-// version: 0.1
-// script:  squirrel
+// [/included StratagemDuo]
+// [included StratagemStorage]
 
 class StratagemStorage
 {
@@ -185,18 +166,13 @@ class StratagemStorage
 		return output;
 		
 	}
-
-
 }
-
-// [/TQ-Bundler: stratagemStorage]
-
-// [TQ-Bundler: board]
-
+// [/included StratagemStorage]
+// [included ClassicMode]
 
 #require "math"
 
-class Board
+class ClassicMode
 {
 	round = null
 	queue = null
@@ -205,7 +181,7 @@ class Board
 	playerInput = null
 	failureFlash = null
 	stratagemPool = null
-	
+	timer = null
 	
 	constructor()
 	{
@@ -214,17 +190,20 @@ class Board
 		health = 100
 		playerInput = ""
 		stratagemPool = StratagemStorage()
-		queue = stratagemPool.getRandomStratagems(3)
-		
+		queue = stratagemPool.getRandomStratagems(3)	
+		timer= RepeatTimer(1)
 	}
 	
-	function Update()
+	function update()
 	{
-		Check()
-		Input()
+		check()
+		input()
+
+		if (timer.isFinished())
+			health -= 5
 	}
 
-	function Draw()
+	function draw()
 	{
 		for (local i = 0; i < queue.len(); i++)
 		{
@@ -276,10 +255,11 @@ class Board
 			rect(20,120,200 * (health*0.01),10,4)
 	}
 	
-	function Check()
+	function check()
 	{
 		if (queue.len() > 0)
 		{
+			//Complete Stratagem
 			if (queue[0].comboCheck(playerInput)== 1)
 			{
 				playerInput = ""
@@ -294,68 +274,174 @@ class Board
 			}
 		}
 		
+		//Refresh upcoming Stratagems
 		if (queue.len() == 0)
 		{
-			queue =stratagemPool.getRandomStratagems(5)
-		}
-			
+			queue = stratagemPool.getRandomStratagems(5)
+		}			
 	}
 
-	function Input()
+	function input()
 	{
 		if (failureFlash != null && !failureFlash.isFinished())
 			return;
-		if (keyp(58) && queue.len() > 0)
+
+		if ((keyp(58) || btnp(6)) && queue.len() > 0)
 		{
 			playerInput += "^"
 		}
 		
-		else if (keyp(59) && queue.len() > 0)
+		else if ((keyp(59) || btnp(5)) && queue.len() > 0)
 		{
 			playerInput += "v"
 		}
 		
-		else if (keyp(60) && queue.len() > 0)
+		else if ((keyp(60) || btnp(7)) && queue.len() > 0)
 		{
 			playerInput += "<"
 		}
 		
-		else if (keyp(61) && queue.len() > 0)
+		else if ((keyp(61) || btnp(4)) && queue.len() > 0)
 		{
 			playerInput += ">"
-		}		
+		}	
+
+		else if (keyp(17))
+		{
+			GAME_STATE = "MainMenu"
+		}	
+	}
+}
+// [/included ClassicMode]
+// [included MenuPointer]
+
+class menuPointer
+{
+	current = null
+	limit = null
+
+	constructor (_limit)
+	{
+		current = 0 
+		limit = _limit
+	}
+
+	function eq(value)
+	{
+		return current == value
+	}
+	
+	function _add(right)
+	{
+		current = (current + right) % limit
+		return this
+	}
+	
+	function _sub(right)
+	{
+		current = (current - right);
+		if (current < 0)
+			current = limit - 1
+		return this
+	}
+
+	function _tostring()
+	{
+		return current.tostring()
+	}
+}
+// [/included MenuPointer]
+// [included StateMainMenu]
+
+class StateMainMenu
+{
+	menuText = null
+	choice = null
+
+	constructor()
+	{
+		 menuText = ["Play","Settings","Quit"]
+		 choice = menuPointer(3);
+	}
+
+	function draw()
+	{
+		drawBoxes()
+	}
+
+	function drawBoxes()
+	{
+
+		for (local i = 0; i < 3; i++)
+		{
+			local scale = 2
+			local length = 5;
+			local left = 120-(length*8*scale)/2
+			local top = 40+i*32
+
+
+			spr(240,left,top,0,2)
+			local l = 1;
+			for (; l <= length-2; l++)
+			{	
+				spr(241,left+16*l,top,0,2)
+			}
+			spr(242,left+16*l,top,0,2)
+
+			local nameWidth = print(menuText[i],0,-10)
+			local nameSideBuffer = (240-nameWidth)/2
+
+			//Highlight selected option
+			if (choice.eq(i))
+			{
+				rect(left+2,top+2,76,12,4)
+			}
+
+			print(menuText[i],nameSideBuffer,top+6)
+		}
+	}
+
+
+	function update()
+	{
+		if (keyp(59) || btnp(1))
+		{
+			choice += 1
+		}
+
+		else if (keyp(58) || btnp(0))
+		{
+			choice -= 1
+		}
+
+		if (keyp(17) && choice.eq(0))
+		{
+			GAME_STATE = "Game"
+		}
 	}
 }
 
-// [/TQ-Bundler: board]
 
 
 
-t<-0
-x<-96
-y<-24
 
+// [/included StateMainMenu]
+local game = ClassicMode()
+local mainMenu = StateMainMenu()
+local settingsMenu = null
 
-local game = Board();
+local game_state = {}
+game_state[STATE_MENU_MAIN] <- mainMenu
+game_state[STATE_GAME] <- game
 
 local TIMERS = []
 
 function TIC()
 {
-	if (btn(0)) y=y-1;
-	if (btn(1)) y=y+1;
-	if (btn(2)) x=x-1;
-	if (btn(3)) x=x+1;
+	cls()
 
-	cls(0)
-	game.Update()
-	game.Draw()
-	
-	
-
-	if (t % 30 == 0)
-		game.health -= 2.5
-	t=t+1
+	game_state[GAME_STATE].update()
+	game_state[GAME_STATE].draw()
 }
 
 
@@ -422,7 +508,67 @@ function TIC()
 // 065:00000000d0000000dd000000ddd00000dddd0000ddddd000dddddd00ddddddd0
 // 080:0000dddd0000dddd0000dddd0000dddd0000dddd0000dddd0000dddd00000000
 // 081:dddd0000dddd0000dddd0000dddd0000dddd0000dddd0000dddd000000000000
+// 240:ddddddddd0000000d00000000000000000000000d0000000d0000000dddddddd
+// 241:7dddddd50000000000000000000000000000000000000000000000007dddddd5
+// 242:dddddddd0000000d0000000d00000000000000000000000d0000000ddddddddd
 // </TILES>
+
+// <TILES1>
+// 033:0000000000000000000000000000000000044000000040000000400000000000
+// </TILES1>
+
+// <SPRITES>
+// 006:0222222202222222022222220222222202222222022222220222222202222222
+// 007:2222222222222222222022222220222022202220222022202220002022222222
+// 008:2222222222222222002000202022022020220220002202202022022022222222
+// 009:2222222222222222202202222022022220020222202002222022022222222222
+// 010:2222222022222220222222202222222022222220222222202222222022222220
+// 022:c0c00000c0c00000c0ccc000c0c0c00cc0ccc0c0cccc0c000000cc000ccc00cc
+// 023:0000c00000000000000cc00000c000c0000ccc000cccccc00cc0000ccccccc0c
+// 024:0000000c000000000000000c0000000cc000000cccc0cccc00000000ccc0000c
+// 025:00ccc0000c00cc0c0c0c0c000cc00c0000ccc00cc0ccc00ccc000cc000ccc00c
+// 026:c00cccc0c000000cc000ccc0c00c0000cc0ccccccc00000000c0c000ccc00000
+// 038:0000c000cccc00000c0000000c00000c0c00000c0000000c0c0000000ccc0ccc
+// 039:0c0000cc0ccccc00c000000000ccccc00000000000ccccc0c0000000c0cccccc
+// 040:000c00c0ccc00c00c0000ccc0c00c0000c0000cc0c000000c00000c0cccc0ccc
+// 041:0c000c0000ccc00c00ccc000cc0c0c0c0c0cccc00c0000cc00ccc0c0cc000ccc
+// 042:00c0c000cc000000ccccccc000cc000c00ccccc0cccc000c00ccccc0cccccccc
+// 054:c000cc00c0000c00c000cc000ccc0cccc000cc00c00c0c00ccc00c00c00c0c00
+// 055:0cc0000c0ccccc0c0cc0000cc0cccccc00c000cc00cc0ccc00c0c0cc00c000cc
+// 056:0000c000ccc0c0cc0000c00000000ccc000c0cccc00cc0000c0cc00000ccc000
+// 057:0c000c00cccccc00cc000c000c000ccc0cccc00ccc000cc0cc000cc0ccccc00c
+// 058:c000000cc000000cc00c000cccc0ccc0cc0cccc000cc000c00cc00c0cc0ccc00
+// 070:c000cccc0cccccccc000000c0ccc000c0000c00ccccc000c0000000000000000
+// 071:ccc000ccccc000cc00c000c000c000c000c000c0000ccc000000000000000000
+// 072:000c0ccc000cc0c0c0c0c0c0c0c0c0c00c000c0c0c000c0c0000000000000000
+// 073:0c000000cc000cc0c0c0c00cc00c000000c0c0000c000c000000000000000000
+// 074:00cc00cc00cccccc0c0000c0c0000c00c000c000c00ccccc0000000000000000
+// 086:0222222202222222022222220222222202222222022222220222222202222222
+// 087:2222222222222222222022222220222022202220222022202220002022222222
+// 088:2222222222222222002000202022022020220220002202202022022022222222
+// 089:2222222222222222202202222022022220020222202002222022022222222222
+// 090:2222222022222220222222202222222022222220222222202222222022222220
+// 102:c0c0c000c000c0000c0cc00000cc000ccc00c0cccccc0cc0000cccc00ccc00cc
+// 103:000cc00000000000000cc000c0cc00c0000ccc00ccccccc0cccc000ccccccc0c
+// 104:000000cc00000000000000cccc0000cccc0000ccccc0ccccc000000cccc000cc
+// 105:00ccc0000cc0cc0c0ccccc000cc0cc0000ccc00cc0ccc00cccc0cccc00ccc00c
+// 106:cc0cccc0cc0000cccc00ccc0cc0cc000cccccccccc00cc000cc0cc00ccc00000
+// 118:000cc000cccc00000cc0000c0cc000cc0cc000cc000000cc0cc0000c0ccc0ccc
+// 119:cc000ccccccccc00c000000000ccccc00000000000ccccc0c0000000c0cccccc
+// 120:c0cc0cc0ccc00cc0cc000ccc0cc0c00c0cc000cc0cc00000cc0000cccccc0ccc
+// 121:0cc0cc0000ccc00c00ccc000cc0c0c0c0c0ccccc0c0000cc00ccc0ccccc0cccc
+// 122:0cc0cc00cc00cc00ccccccc0ccccc0cc0cccccc0ccccc0cc0cccccc0cc0ccccc
+// 134:cc00ccc0cc000cc0cc00ccc00ccc0ccccc00ccc0cc0c0cc0ccc00cc0cc0c0cc0
+// 135:cccc000ccccccc0ccccc000cc0cccccc00cc0ccc00cccccc00c0c0cc00c000cc
+// 136:c000cc00ccc0cc0cc000cc00c0000cccc00c0ccccc0ccc0ccccccc0cc0cccc0c
+// 137:0cc0cc0ccccccc0cccc0cc0c0cc0cccc0cccc000ccc0ccccccc0ccccccccc0cc
+// 138:c00000ccc00000ccc00cc0cccc00ccc0000cccc00cccc0cc0cccccc00cccccc0
+// 150:cc00cccc0ccccccccc0000cc0ccc00cc000cc0cccccc00cc0000000000000000
+// 151:ccc000ccc0cc0ccc00cc0ccc00cc0ccc00cc0cc0000ccc000000000000000000
+// 152:c00c0cccc0ccc000c0ccc000c0ccc0c0ccc0cccc0c00cc0c0000000000000000
+// 153:0cc0000cccc0ccccc0ccc00cc00c0000c0ccc000ccc0cc0c0000000000000000
+// 154:cc0cc0cc0cccccccccc000cccc000cc0cc00cc00c00ccccc0000000000000000
+// </SPRITES>
 
 // <WAVES>
 // 000:00000000ffffffff00000000ffffffff

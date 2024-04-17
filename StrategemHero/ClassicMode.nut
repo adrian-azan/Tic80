@@ -1,7 +1,6 @@
-
 #require "math"
 
-class Board
+class ClassicMode
 {
 	round = null
 	queue = null
@@ -10,7 +9,7 @@ class Board
 	playerInput = null
 	failureFlash = null
 	stratagemPool = null
-	
+	timer = null
 	
 	constructor()
 	{
@@ -19,17 +18,20 @@ class Board
 		health = 100
 		playerInput = ""
 		stratagemPool = StratagemStorage()
-		queue = stratagemPool.getRandomStratagems(3)
-		
+		queue = stratagemPool.getRandomStratagems(3)	
+		timer= RepeatTimer(1)
 	}
 	
-	function Update()
+	function update()
 	{
-		Check()
-		Input()
+		check()
+		input()
+
+		if (timer.isFinished())
+			health -= 5
 	}
 
-	function Draw()
+	function draw()
 	{
 		for (local i = 0; i < queue.len(); i++)
 		{
@@ -81,10 +83,11 @@ class Board
 			rect(20,120,200 * (health*0.01),10,4)
 	}
 	
-	function Check()
+	function check()
 	{
 		if (queue.len() > 0)
 		{
+			//Complete Stratagem
 			if (queue[0].comboCheck(playerInput)== 1)
 			{
 				playerInput = ""
@@ -99,35 +102,41 @@ class Board
 			}
 		}
 		
+		//Refresh upcoming Stratagems
 		if (queue.len() == 0)
 		{
-			queue =stratagemPool.getRandomStratagems(5)
-		}
-			
+			queue = stratagemPool.getRandomStratagems(5)
+		}			
 	}
 
-	function Input()
+	function input()
 	{
 		if (failureFlash != null && !failureFlash.isFinished())
 			return;
-		if (keyp(58) && queue.len() > 0)
+
+		if ((keyp(58) || btnp(6)) && queue.len() > 0)
 		{
 			playerInput += "^"
 		}
 		
-		else if (keyp(59) && queue.len() > 0)
+		else if ((keyp(59) || btnp(5)) && queue.len() > 0)
 		{
 			playerInput += "v"
 		}
 		
-		else if (keyp(60) && queue.len() > 0)
+		else if ((keyp(60) || btnp(7)) && queue.len() > 0)
 		{
 			playerInput += "<"
 		}
 		
-		else if (keyp(61) && queue.len() > 0)
+		else if ((keyp(61) || btnp(4)) && queue.len() > 0)
 		{
 			playerInput += ">"
-		}		
+		}	
+
+		else if (keyp(17))
+		{
+			GAME_STATE = "MainMenu"
+		}	
 	}
 }
