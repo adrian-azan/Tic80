@@ -29,6 +29,11 @@ class ClassicMode
 
 		if (timer.isFinished())
 			health -= 5
+
+		if (health <= 0)
+		{
+			GAME_STATE = STATE_GAME_OVER
+		}
 	}
 
 	function draw()

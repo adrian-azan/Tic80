@@ -15,8 +15,9 @@
 const STATE_MENU_MAIN = "MainMenu"
 const STATE_GAME = "Game"
 const STATE_MENU_SETTINGS = "SettingsMenu"
+const STATE_GAME_OVER = "GameOver"
 
-local GAME_STATE = STATE_GAME
+local GAME_STATE = STATE_GAME_OVER
 // [/included Constants]
 // [included Timer]
 
@@ -201,6 +202,11 @@ class ClassicMode
 
 		if (timer.isFinished())
 			health -= 5
+
+		if (health <= 0)
+		{
+			GAME_STATE = STATE_GAME_OVER
+		}
 	}
 
 	function draw()
@@ -414,10 +420,15 @@ class StateMainMenu
 			choice -= 1
 		}
 
-		if (keyp(17) && choice.eq(0))
+		if (keyp(48) && choice.eq(0))
 		{
 			GAME_STATE = "Game"
 		}
+
+		if (keyp(48) && choice.eq(2))
+		{
+			exit()
+		}	
 	}
 }
 
@@ -426,13 +437,97 @@ class StateMainMenu
 
 
 // [/included StateMainMenu]
+// [included StateGameOverMenu]
+
+class StateGameOverMenu
+{
+	
+	menuText = null
+	choice = null
+
+	constructor()
+	{
+		menuText = ["Run It Back", "Too Hawd, I Qwit"]
+		choice = menuPointer(2);
+	}
+
+
+	function draw()
+	{
+		local scale = 3
+		local spriteId = [243,244,245,246,247,248,246,249]
+
+		for (local i = 0; i < spriteId.len(); i++)
+		{
+			spr(spriteId[i],(scale * i * 8) + (3*i)+10,30,-1,scale)
+		}
+		
+
+			for (local i = 0; i < 2; i++)
+		{
+			local scale = 2
+			local length = 6;
+			local left = 120-(length*8*scale)/2
+			local top = 80+i*32
+
+
+			spr(240,left,top,0,2)
+			local l = 1;
+			for (; l <= length-2; l++)
+			{	
+				spr(241,left+16*l,top,0,2)
+			}
+			spr(242,left+16*l,top,0,2)
+
+			local nameWidth = print(menuText[i],0,-10)
+			local nameSideBuffer = (240-nameWidth)/2
+
+			//Highlight selected option
+			if (choice.eq(i))
+			{
+				rect(left+2,top+2,92,12,4)
+			}
+
+			print(menuText[i],nameSideBuffer,top+6)
+		}
+
+	}
+
+	function update()
+	{
+			if (keyp(59) || btnp(1))
+		{
+			choice += 1
+		}
+
+		else if (keyp(58) || btnp(0))
+		{
+			choice -= 1
+		}
+
+		if (keyp(48) && choice.eq(0))
+		{
+			GAME_STATE = "Game"
+		}
+
+		if (keyp(48) && choice.eq(1))
+		{
+			exit()
+		}		
+	}
+}
+// [/included StateGameOverMenu]
+
+
 local game = ClassicMode()
+local gameOver = StateGameOverMenu()
 local mainMenu = StateMainMenu()
 local settingsMenu = null
 
 local game_state = {}
 game_state[STATE_MENU_MAIN] <- mainMenu
 game_state[STATE_GAME] <- game
+game_state[STATE_GAME_OVER] <- gameOver
 
 local TIMERS = []
 
@@ -511,6 +606,13 @@ function TIC()
 // 240:ddddddddd0000000d00000000000000000000000d0000000d0000000dddddddd
 // 241:7dddddd50000000000000000000000000000000000000000000000007dddddd5
 // 242:dddddddd0000000d0000000d00000000000000000000000d0000000ddddddddd
+// 243:0022220002000020200000002000000020002220220002000222220000000000
+// 244:0002200000022000002002000020020002222220020000202000000200000000
+// 245:0200002002200220202002022020020220222202200000022000000200000000
+// 246:2222220020000000200000002222000020000000200000002222220000000000
+// 247:0022220002000020200000022000000220000002020000200022220000000000
+// 248:2000000220000002020000200200002000200200002002000002200000000000
+// 249:0222200020002000200020002002000022200000200200002000200000000000
 // </TILES>
 
 // <TILES1>

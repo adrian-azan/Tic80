@@ -1,28 +1,33 @@
-class StateMainMenu
+class StateGameOverMenu
 {
+	
 	menuText = null
 	choice = null
 
 	constructor()
 	{
-		 menuText = ["Play","Settings","Quit"]
-		 choice = menuPointer(3);
+		menuText = ["Run It Back", "Too Hawd, I Qwit"]
+		choice = menuPointer(2);
 	}
+
 
 	function draw()
 	{
-		drawBoxes()
-	}
+		local scale = 3
+		local spriteId = [243,244,245,246,247,248,246,249]
 
-	function drawBoxes()
-	{
+		for (local i = 0; i < spriteId.len(); i++)
+		{
+			spr(spriteId[i],(scale * i * 8) + (3*i)+10,30,-1,scale)
+		}
+		
 
-		for (local i = 0; i < 3; i++)
+			for (local i = 0; i < 2; i++)
 		{
 			local scale = 2
-			local length = 5;
+			local length = 6;
 			local left = 120-(length*8*scale)/2
-			local top = 40+i*32
+			local top = 80+i*32
 
 
 			spr(240,left,top,0,2)
@@ -39,17 +44,17 @@ class StateMainMenu
 			//Highlight selected option
 			if (choice.eq(i))
 			{
-				rect(left+2,top+2,76,12,4)
+				rect(left+2,top+2,92,12,4)
 			}
 
 			print(menuText[i],nameSideBuffer,top+6)
 		}
-	}
 
+	}
 
 	function update()
 	{
-		if (keyp(59) || btnp(1))
+			if (keyp(59) || btnp(1))
 		{
 			choice += 1
 		}
@@ -64,13 +69,9 @@ class StateMainMenu
 			GAME_STATE = "Game"
 		}
 
-		if (keyp(48) && choice.eq(2))
+		if (keyp(48) && choice.eq(1))
 		{
 			exit()
-		}	
+		}		
 	}
 }
-
-
-
-
