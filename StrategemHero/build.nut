@@ -9,7 +9,7 @@
 // script: squirrel
 
 #require "JSONParser.class.nut:1.0.1"
-// [included Constants]
+// [TQ-Bundler: Constants]
 
 //Game State Values
 const STATE_MENU_MAIN = "MainMenu"
@@ -17,9 +17,11 @@ const STATE_GAME = "Game"
 const STATE_MENU_SETTINGS = "SettingsMenu"
 const STATE_GAME_OVER = "GameOver"
 
-local GAME_STATE = STATE_GAME_OVER
-// [/included Constants]
-// [included Timer]
+local GAME_STATE = STATE_MENU_MAIN
+
+// [/TQ-Bundler: Constants]
+
+// [TQ-Bundler: Timer]
 
 class Timer
 {
@@ -49,8 +51,10 @@ class Timer
 		return format("%d",time(),start)
 	}
 }
-// [/included Timer]
-// [included RepeatTimer]
+
+// [/TQ-Bundler: Timer]
+
+// [TQ-Bundler: RepeatTimer]
 
 class RepeatTimer extends Timer
 {
@@ -65,8 +69,10 @@ class RepeatTimer extends Timer
 		return false
 	}
 }
-// [/included RepeatTimer]
-// [included Stratagem]
+
+// [/TQ-Bundler: RepeatTimer]
+
+// [TQ-Bundler: Stratagem]
 
 class Stratagem {
 	_spriteId = null
@@ -108,8 +114,10 @@ class Stratagem {
 		return 0;
 	}
 }
-// [/included Stratagem]
-// [included StratagemDuo]
+
+// [/TQ-Bundler: Stratagem]
+
+// [TQ-Bundler: StratagemDuo]
 
 class StratagemDuo extends Stratagem
 {
@@ -132,8 +140,10 @@ class StratagemDuo extends Stratagem
 	}
 }
 
-// [/included StratagemDuo]
-// [included StratagemStorage]
+
+// [/TQ-Bundler: StratagemDuo]
+
+// [TQ-Bundler: StratagemStorage]
 
 class StratagemStorage
 {
@@ -168,8 +178,10 @@ class StratagemStorage
 		
 	}
 }
-// [/included StratagemStorage]
-// [included ClassicMode]
+
+// [/TQ-Bundler: StratagemStorage]
+
+// [TQ-Bundler: ClassicMode]
 
 #require "math"
 
@@ -206,6 +218,7 @@ class ClassicMode
 		if (health <= 0)
 		{
 			GAME_STATE = STATE_GAME_OVER
+			reset()
 		}
 	}
 
@@ -261,6 +274,12 @@ class ClassicMode
 			rect(20,120,200 * (health*0.01),10,4)
 	}
 	
+	function reset()
+	{
+		queue = stratagemPool.getRandomStratagems(5)
+		health = 100
+	}
+	
 	function check()
 	{
 		if (queue.len() > 0)
@@ -283,7 +302,7 @@ class ClassicMode
 		//Refresh upcoming Stratagems
 		if (queue.len() == 0)
 		{
-			queue = stratagemPool.getRandomStratagems(5)
+			reset()
 		}			
 	}
 
@@ -318,8 +337,10 @@ class ClassicMode
 		}	
 	}
 }
-// [/included ClassicMode]
-// [included MenuPointer]
+
+// [/TQ-Bundler: ClassicMode]
+
+// [TQ-Bundler: MenuPointer]
 
 class menuPointer
 {
@@ -356,8 +377,10 @@ class menuPointer
 		return current.tostring()
 	}
 }
-// [/included MenuPointer]
-// [included StateMainMenu]
+
+// [/TQ-Bundler: MenuPointer]
+
+// [TQ-Bundler: StateMainMenu]
 
 class StateMainMenu
 {
@@ -436,8 +459,10 @@ class StateMainMenu
 
 
 
-// [/included StateMainMenu]
-// [included StateGameOverMenu]
+
+// [/TQ-Bundler: StateMainMenu]
+
+// [TQ-Bundler: StateGameOverMenu]
 
 class StateGameOverMenu
 {
@@ -516,7 +541,9 @@ class StateGameOverMenu
 		}		
 	}
 }
-// [/included StateGameOverMenu]
+
+// [/TQ-Bundler: StateGameOverMenu]
+
 
 
 local game = ClassicMode()

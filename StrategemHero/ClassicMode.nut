@@ -33,6 +33,7 @@ class ClassicMode
 		if (health <= 0)
 		{
 			GAME_STATE = STATE_GAME_OVER
+			reset()
 		}
 	}
 
@@ -88,6 +89,12 @@ class ClassicMode
 			rect(20,120,200 * (health*0.01),10,4)
 	}
 	
+	function reset()
+	{
+		queue = stratagemPool.getRandomStratagems(5)
+		health = 100
+	}
+	
 	function check()
 	{
 		if (queue.len() > 0)
@@ -110,7 +117,7 @@ class ClassicMode
 		//Refresh upcoming Stratagems
 		if (queue.len() == 0)
 		{
-			queue = stratagemPool.getRandomStratagems(5)
+			reset()
 		}			
 	}
 
