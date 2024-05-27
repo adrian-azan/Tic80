@@ -5,7 +5,7 @@ class StateSettingsMenu
 
 	constructor()
 	{
-		 menuText = ["fart"]
+		 menuText = ["Nothing"]
 		 choice = menuPointer(1);
 	}
 
@@ -17,10 +17,8 @@ class StateSettingsMenu
 	function drawBoxes()
 	{
 
-		for (local i = 0; i < 1; i++)	{
-			
-
-
+		for (local i = 0; i < 1; i++)	
+		{
 			print(menuText[i],20,20)
 		}
 	}
@@ -37,16 +35,6 @@ class StateSettingsMenu
 		{
 			choice -= 1
 		}
-
-		if (keyp(48) && choice.eq())
-		{
-			
-		}
-
-		if (keyp(48) && choice.eq())
-		{
-			
-		}	
 	}
 }
 
